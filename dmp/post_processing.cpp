@@ -5,7 +5,7 @@
 #include "types.hpp"
 
 template<unsigned short CH, unsigned short CW>
-void Adder(hls::stream<COO_Element> in, hls::stream<COO_Element> out){
+void Adder(hls::stream<COO_Element>& in, hls::stream<COO_Element>& out){
     /*
     INPUT STREAM: A stream of merged elements, in COO format
     
@@ -20,40 +20,54 @@ void Adder(hls::stream<COO_Element> in, hls::stream<COO_Element> out){
     Since this needs the complete output of the previous stage before
     starting to stream its own output this might become a bottleneck.
     Can we optimize this?
+
+    We cannot do this row by row because we have p PMCUs parallelly
+    dump in 
     */
+
     static C_dtype C[CH][CW];
-    while(1){
+
+    #pragma HLS bind_storage variable=C type=ram_2p impl=bram
+    #pragma HLS ARRAY_PARTITION variable=C cyclic factor=8 dim=2 
+    // no guarantees of better throughput since access is essentially random 
+    
+    #pragma HLS RESET variable=C
+
+    hls::stream<Index, CH*CW> touchedIndices;
+    #pragma HLS STREAM variable=touchedIndices depth=CH*CW
+
+    accumulate: while(true){
+        #pragma HLS PIPELINE II=1
         COO_Element elem = in.read();
         if(elem.row == USHRT_MAX) break;
+        
         C[elem.row][elem.col] += elem.val;
+        touchedIndices.write(Index{
+            elem.row,
+            elem.col
+        });
     }
 
-    
-    for(int row = 0; row < CH; row++){
-        for(int col = 0; col < CW; col++){
-            auto v = C[row][col];
-            /*
-            The following if condition should ideally eliminate the 
-            need for a separate ZeroEliminator function.
-            */
-            if(v != 0) out.write(COO_Element{
-                row, 
-                col,
-                v
-            });
-        }
-    }
+    emit: while(!touchedIndices.empty()){
+        Index idx = touchedIndices.read();
+        out.write(COO_Element{
+            idx.row,
+            idx.col,
+            C[idx.row][idx.col]
+        });
+    }   
+    out.write(COO_Element{USHRT_MAX, 0, 0});
 }
 
 // We will just leave this here; this won't be synthesized.
-void ZeroEliminator(hls::stream<COO_Element> in, hls::stream<COO_Element> out){
+void ZeroEliminator(hls::stream<COO_Element>& in, hls::stream<COO_Element>& out){
     COO_Element coo_elem = in.read();
     if (coo_elem.val != 0) {
         out.write(coo_elem);
     }
 }
 
-void COOToCSR(hls::stream<COO_Element> coo, hls::stream<CSR_Element> csr){
+void COOToCSR(hls::stream<COO_Element>& coo, hls::stream<CSR_Element>& csr){
     /*
     ASSUMPTION: The COO elements are streamed to this function
     in a row major manner, or else the sizes of each row cannot be
@@ -62,11 +76,18 @@ void COOToCSR(hls::stream<COO_Element> coo, hls::stream<CSR_Element> csr){
     INPUT STREAM: A stream of COO elements in row-major manner
     OUTPUT STREAM: A stream of CSR elements in row-major manner
     */
-    static unsigned int nz_id = 0;
-    static unsigned int prev_rptr = UINT_MAX;
+    static unsigned int nz_id      = 0;
+    static unsigned int prev_rptr  = UINT_MAX;
     static unsigned short prev_row = USHRT_MAX; // so that prev_row++ wraps around
 
     COO_Element coo_elem = coo.read();
+    if (coo_elem.row == USHRT_MAX) {
+        nz_id     = 0;
+        prev_rptr = UINT_MAX;
+        prev_row  = USHRT_MAX;
+        csr.write(CSR_Element{USHRT_MAX, 0, 0});
+        return;
+    }
     if(coo_elem.row == prev_row){
         csr.write(CSR_Element{
             prev_rptr,
@@ -80,17 +101,19 @@ void COOToCSR(hls::stream<COO_Element> coo, hls::stream<CSR_Element> csr){
             coo_elem.val
         });
         prev_rptr = nz_id;
-        prev_row++;
+        // prev_row++; This is incorrect in the case of skipped empty rows
+        prev_row = coo_elem.row;
     }
     nz_id++;
-    
-    // Add this later: hls_thread_local hls::task(COO_to_CSR,...)
 } 
 
 template<unsigned short CH, unsigned short CW>
-void PostProcessing(hls::stream<COO_Element> in, hls::stream<CSR_Element> out){
-    hls_thread_local hls::stream<COO_Element, CH * CW> nonZeroC;
+void PostProcessing(hls::stream<COO_Element>& in, hls::stream<CSR_Element>& out){
+    hls::stream<COO_Element, CH * CW> nonZeroC; // the design forces this huge buffer allocation
+    #pragma HLS STREAM variable=nonZeroC depth=CH*CW
     
-    hls_thread_local hls::task adder(Adder<CH, CW>, in, nonZeroC);
-    hls_thread_local hls::task convert(COOToCSR(nonZeroC, out));
+    // It is useless to create a task to handle Adder since there is no real
+    // producer-consumer paradigm here.
+    Adder<CH, CW>(in, nonZeroC); // Potential bottleneck due to depth-2 FIFO behavior of nonZeroC
+    hls_thread_local hls::task convert(COOToCSR, nonZeroC, out);
 }

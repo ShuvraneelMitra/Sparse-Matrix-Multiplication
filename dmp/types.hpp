@@ -5,7 +5,7 @@ typedef ap_uint<9> out_add_type;
 typedef ap_uint<8> A_dtype;
 
 /*
-The max number of bits in the output matrix C is 
+The max number of bits isn the output matrix C is 
 the max number of bits in the aggregate of a number of 
 8b x 8b multiplications, which is potentially 16b long.
 Thus the max number of bits in C_dtype should be 
@@ -13,6 +13,11 @@ Thus the max number of bits in C_dtype should be
 representing n_cols with a short.
 */
 typedef ap_uint<24> C_dtype;
+
+struct Index {
+  unsigned short row;
+  unsigned short col;  
+};
 
 template<short N_ROWS, short N_COLS, int N_NZ>
 struct CSR {
