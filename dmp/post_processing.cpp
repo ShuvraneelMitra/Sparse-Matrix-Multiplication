@@ -22,7 +22,12 @@ void Adder(hls::stream<COO_Element>& in, hls::stream<COO_Element>& out){
     Can we optimize this?
 
     We cannot do this row by row because we have p PMCUs parallelly
-    dump in 
+    dump in (row, col, val) tuples. Suppose one stream, Si, has many
+    values in row 1 while another one, Sj, does not. Then, it could be 
+    the case that Si is emitting row 1 values while Sj has already progressed
+    to, say, row 3. Synchronizing all the p parallel processes to wait
+    till each of them has completed row 1 might be a viable alternative
+    we might want to explore.
     */
 
     static C_dtype C[CH][CW];
@@ -31,7 +36,12 @@ void Adder(hls::stream<COO_Element>& in, hls::stream<COO_Element>& out){
     #pragma HLS ARRAY_PARTITION variable=C cyclic factor=8 dim=2 
     // no guarantees of better throughput since access is essentially random 
     
-    #pragma HLS RESET variable=C
+    init: for (int i = 0; i < CH; i++){
+        for (int j = 0; j < CW; j++) {
+            #pragma HLS PIPELINE II=1
+            C[i][j] = 0;
+        }
+    }
 
     hls::stream<Index, CH*CW> touchedIndices;
     #pragma HLS STREAM variable=touchedIndices depth=CH*CW
@@ -79,6 +89,7 @@ void COOToCSR(hls::stream<COO_Element>& coo, hls::stream<CSR_Element>& csr){
     static unsigned int nz_id      = 0;
     static unsigned int prev_rptr  = UINT_MAX;
     static unsigned short prev_row = USHRT_MAX; // so that prev_row++ wraps around
+    // UPDATE: Since we got rid of prev_row++, the initial value doesn't really matter
 
     COO_Element coo_elem = coo.read();
     if (coo_elem.row == USHRT_MAX) {
@@ -115,5 +126,5 @@ void PostProcessing(hls::stream<COO_Element>& in, hls::stream<CSR_Element>& out)
     // It is useless to create a task to handle Adder since there is no real
     // producer-consumer paradigm here.
     Adder<CH, CW>(in, nonZeroC); // Potential bottleneck due to depth-2 FIFO behavior of nonZeroC
-    hls_thread_local hls::task convert(COOToCSR, nonZeroC, out);
+    COOToCSR(nonZeroC, out); // no hls::task needed
 }
