@@ -1,0 +1,105 @@
+[
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\pmcu.cpp"
+    ],
+    "file": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\pmcu.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\mata_distributor.cpp"
+    ],
+    "file": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\mata_distributor.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\topfile.cpp"
+    ],
+    "file": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\topfile.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\post_processing.cpp"
+    ],
+    "file": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\post_processing.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "..\\dmp_src\\post_processing.cpp"
+    ],
+    "file": "..\\dmp_src\\post_processing.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "..\\dmp_src\\topfile.cpp"
+    ],
+    "file": "..\\dmp_src\\topfile.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\common\\technology\\autopilot",
+      "-fhlstoplevel=top",
+      "-c",
+      "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\matb_loader.cpp"
+    ],
+    "file": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\matb_loader.cpp"
+  },
+  {
+    "directory": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp",
+    "arguments": [
+      "C:\\Xilinx\\2025.2\\Vitis\\win64\\tools\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\2025.2\\Vitis\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls-tb",
+      "-hls-sim-headers-dir=C:\\Xilinx\\2025.2\\Vitis\\include",
+      "-c",
+      "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\testbench.cpp"
+    ],
+    "file": "C:\\Users\\MITRA\\Desktop\\Projects\\SpMM\\dmp\\testbench.cpp"
+  }
+]
